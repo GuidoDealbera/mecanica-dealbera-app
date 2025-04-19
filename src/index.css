@@ -1,0 +1,34 @@
+body {
+  background: linear-gradient(to bottom, #707070 0%, #222222 100%);
+  background-repeat: no-repeat;
+  color: white;
+}
+
+@font-face {
+  font-family: 'FE-FONT';
+  src: url(./assets/fonts/FE-FONT.TTF) format('truetype');
+}
+
+main {
+  position: absolute;
+  top: 100px; /* altura del espacio que querés dejar arriba */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+/* Estilos para scrollbar */
+main::-webkit-scrollbar {
+  width: 10px;
+}
+
+main::-webkit-scrollbar-thumb {
+  background-color: #999;
+  border-radius: 4px;
+}
+
+main::-webkit-scrollbar-track {
+  background: transparent;
+}
