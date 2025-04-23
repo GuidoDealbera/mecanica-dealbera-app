@@ -1,4 +1,4 @@
-import { Box, Paper } from "@mui/material";
+import { Paper, TableContainer } from "@mui/material";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 
 interface Props {
@@ -11,18 +11,39 @@ const CustomDataGrid: React.FC<Props> = ({ rows, columns }) => {
     ...column,
     headerAlign: column.headerAlign ?? "center",
     flex: 1,
-    minWidth: column.minWidth ?? 120,
+    minWidth: column.minWidth ?? 200,
+    width: column.width,
     align: column.align ?? 'center',
-    resizable: false
+    resizable: false,
+    filterable: column.filterable ?? false,
+    hideable: column.hideable ?? false,
+    sortable: column.sortable ?? false,
+    disableColumnMenu: true
   }));
 
   return (
-    <Box component={Paper}>
+    <TableContainer component={Paper} sx={{p:1, bgcolor: 'transparent'}}>
       <DataGrid
         rows={rows}
         columns={processedColumns}
+        showCellVerticalBorder
+        showColumnVerticalBorder
+        disableRowSelectionOnClick
+        localeText={{
+          noRowsLabel: 'No hay automóviles registrados'
+        }}
+        pageSizeOptions={[5, 10, 25]}
+        slotProps={{
+          footer: {
+            sx: {
+              justifyContent: 'center',
+              alignItems: 'center'
+            }
+          }
+        }}
+        sx={{bgcolor: 'white'}}
       />
-    </Box>
+    </TableContainer>
   );
 };
 

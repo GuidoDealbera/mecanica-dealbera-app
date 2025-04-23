@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { formatLicence } from "../utils";
+import { formatLicence } from "../../utils";
 
 interface Props {
   licence: string;

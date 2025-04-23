@@ -1,22 +1,18 @@
 import { API_BASE_URL, apiAxios } from "../../axios.config";
-import { CreateCarBody } from "../../Types/apiTypes";
+import { APIResponse, CreateCarBody } from "../../Types/apiTypes";
 import { Car } from "../../Types/types";
 import { handleApiError } from "../../utils";
 
 const SERVER_URL = `${API_BASE_URL}/cars`;
 
 export const carService = {
-  create: async (body: CreateCarBody): Promise<Car> => {
-    try {
-      return (await apiAxios.post<Car>(`${SERVER_URL}/register`, body)).data;
-    } catch (error) {
-      console.error(error);
-      throw new Error('Error al crear automóvil')
-    }
+  create: async (body: CreateCarBody): Promise<APIResponse> => {
+    return (await apiAxios.post<APIResponse>(`${SERVER_URL}/register`, body))
+      .data;
   },
-  getAll: async (): Promise<Car[]> => {
+  getAll: async (): Promise<APIResponse> => {
     try {
-      return (await apiAxios.get<Car[]>(`${SERVER_URL}/all`)).data;
+      return (await apiAxios.get<APIResponse>(`${SERVER_URL}/all`)).data;
     } catch (error) {
       throw handleApiError(error);
     }

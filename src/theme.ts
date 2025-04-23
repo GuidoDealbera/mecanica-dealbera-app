@@ -85,6 +85,41 @@ const theme = createTheme({
         },
       },
     },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: baseTheme.palette.primary.main,
+          fontSize: 12,
+          fontWeight: 700
+        }
+      }
+    },
+    MuiFab: {
+      styleOverrides: {
+        root: {
+          backgroundColor: baseTheme.palette.primary.dark,
+          color: "white",
+          "&:hover": {
+            backgroundColor: baseTheme.palette.primary.main
+          }
+        }
+      }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          "&:disabled": {
+            backgroundColor: baseTheme.palette.primary.dark,
+            color: baseTheme.palette.primary.light
+          },
+          backgroundColor: baseTheme.palette.primary.dark,
+          color: "white",
+          "&:hover": {
+            backgroundColor: baseTheme.palette.primary.main
+          }
+        }
+      }
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {

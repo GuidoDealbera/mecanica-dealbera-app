@@ -27,3 +27,9 @@ export interface CreateCarBody {
   jobs?: Jobs[];
   kilometers: number | "";
 }
+
+export interface APIResponse {
+  statusCode: number,
+  message: string | string[];
+  result: any
+}

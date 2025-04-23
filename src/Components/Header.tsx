@@ -1,11 +1,12 @@
-import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
+import { AppBar, Box, Button, Fab, Toolbar, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
   const [date, setDate] = useState<Date>(new Date());
-
+  const isHomePage = location.pathname === '/'
   useEffect(() => {
     const interval = setInterval(() => {
       setDate(new Date());
@@ -44,7 +45,21 @@ const Header = () => {
           alignItems: "center",
         }}
       >
-        <Box sx={{ display: "flex", gap: 2 }}>
+        {!isHomePage && (
+          <Tooltip title='Atrás'>
+            <Fab
+              size="small"
+              color="primary"
+              onClick={() => navigate(-1)}
+              sx={{
+                position: "absolute",
+              }}
+            >
+              <ArrowBack />
+            </Fab>
+            </Tooltip>
+          )}
+        <Box sx={{ display: "flex", gap: 2, ml: 8 }}>
           {BUTTONS.map(({ path, text }, i) => {
             const isActive =
               path === "/"
@@ -58,10 +73,10 @@ const Header = () => {
                 sx={{
                   color: isActive ? "white" : "black",
                   fontWeight: 700,
-                  bgcolor: isActive ? "primary.main" : "transparent",
+                  bgcolor: isActive ? "primary.dark" : "transparent",
                   boxShadow: isActive ? undefined : "none",
                   "&:hover": {
-                    bgcolor: isActive ? "primary.dark" : "transparent",
+                    bgcolor: isActive ? "primary.main" : "transparent",
                   },
                 }}
               >

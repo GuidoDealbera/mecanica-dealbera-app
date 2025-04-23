@@ -42,7 +42,7 @@ const carSlice = createSlice({
       })
       .addCase(fetchCars.fulfilled, (state, action) => {
         state.loadingStates.fetching_all = false;
-        state.allCars = action.payload;
+        state.allCars = action.payload.result;
       })
       .addCase(fetchCarByLicence.pending, (state) => {
         state.loadingStates.fetching = true;

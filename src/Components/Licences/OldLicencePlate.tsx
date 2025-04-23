@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box } from "@mui/material";
-import { formatLicence } from "../utils";
+import { formatLicence } from "../../utils";
 
 interface Props {
   licence: string;
@@ -18,7 +18,7 @@ const OldLicencePlate: React.FC<Props> = ({ licence, width }) => {
         const containerWidth = containerRef.current.offsetWidth;
         const textWidth = textRef.current.scrollWidth;
         const newScale = containerWidth / textWidth;
-        setScale(Math.min(newScale, 2)); // No escalar más de 1x
+        setScale(Math.min(newScale, 2));
       }
     };
 

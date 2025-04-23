@@ -4,8 +4,7 @@ export const toastSuccessStyle: ExternalToast = {
     style: {
         backgroundColor: "#27c93f",
         color: "#FFFFFF",
-        border: "solid #27c93f",
-        boxShadow: "0 0 5px #27c93f"
+        border: "solid #3E3E3E",
     }
 }
 
@@ -13,8 +12,7 @@ export const toastErrorStyle: ExternalToast = {
     style: {
         backgroundColor: "#ff5f56",
         color: "#FFFFFF",
-        border: "solid #ff5f56",
-        boxShadow: "0 0 5px #ff5f56"
+        border: "solid #3E3E3E",
     }
 };
 
@@ -22,8 +20,7 @@ export const toastWarningStyle: ExternalToast = {
     style: {
         backgroundColor: "#ffbd2e",
         color: "#151515",
-        border: "solid #ffbd2e",
-        boxShadow: "0 0 5px #ffbd2e"
+        border: "solid #3E3E3E",
     }
 };
 export const toastLoadingStyle: ExternalToast = {

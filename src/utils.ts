@@ -1,4 +1,6 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError, isAxiosError } from "axios";
+import { ToastError } from "./ToastAlerts/alerts";
+import { APIResponse } from "./Types/apiTypes";
 
 export enum CarsBrands {
   Coradir = "Coradir",
@@ -50,63 +52,42 @@ export const BRANDS = Object.values(CarsBrands)
   .map((brand) => brand.toUpperCase())
   .sort((a, b) => a.localeCompare(b));
 
-export function handleApiError(error: unknown) {
-  if (axios.isAxiosError(error)) {
-    const axiosError = error as AxiosError<{
-      detail: Array<{ msg: string }> | string | { error_origin: string };
-    }>;
-    if (axiosError.response) {
-      const { detail } = axiosError.response.data;
-      // Caso 1: Error simple con mensaje directo
-      if (typeof detail === "string") {
-        return {
-          message: detail,
-          details: [],
-        };
+  export function handleApiError(error: unknown): APIResponse {
+    let statusCode = 500;
+    let message = 'Ocurrió un error inesperado';
+    
+    if (isAxiosError(error)) {
+      if (error.response) {
+        statusCode = error.response.status;
+  
+        if (typeof error.response.data === 'string') {
+          message = error.response.data;
+        } else if (typeof error.response.data?.message === 'string') {
+          message = error.response.data.message;
+        } else if (Array.isArray(error.response.data?.message)) {
+          message = error.response.data.message[0]; // en caso de validaciones tipo DTO
+        } else {
+          message = 'Error en la respuesta del servidor';
+        }
+  
+      } else {
+        // Error sin respuesta (por ejemplo, sin internet)
+        statusCode = error.status || 500;
+        message = error.message || 'No se pudo conectar al servidor';
       }
-
-      // Caso 2: Error de procedimiento almacenado
-      if (detail && typeof detail === "object" && "error_origin" in detail) {
-        const userError = detail;
-        return {
-          message: userError.error_origin,
-          details: [],
-        };
-      }
-
-      // Caso 3: Array de errores de validación
-      if (Array.isArray(detail)) {
-        const errorDetails = detail.map((err) => err.msg);
-        return {
-          message: "Se produjo un error de validación",
-          details: errorDetails,
-        };
-      }
-
-      return {
-        message: "Error en la respuesta del servidor",
-        details: [],
-      };
+  
+    } else if (error instanceof Error) {
+      message = error.message;
+    } else if (typeof error === 'string') {
+      message = error;
     }
-
-    if (axiosError.request) {
-      return {
-        message: "No se recibió respuesta del servidor",
-        details: [],
-      };
-    }
-
+  
     return {
-      message: "Error al configurar la petición",
-      details: [],
+      statusCode,
+      message,
+      result: null,
     };
   }
-
-  return {
-    message: "Error desconocido en la operación de API",
-    details: [],
-  };
-}
 
 export const formatLicence = (licencePlate: string): string => {
   const licence = licencePlate.toUpperCase();

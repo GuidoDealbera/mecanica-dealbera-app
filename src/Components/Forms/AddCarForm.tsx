@@ -1,44 +1,59 @@
 import {
   Autocomplete,
   Box,
-  Paper,
   TextField,
-  Grid,
   Typography,
   Button,
+  Grid,
+  CircularProgress,
 } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
 import { BRANDS } from "../../utils";
-import { useAddCarForm } from "../../Hooks/useAddCarForm";
+import { CreateCarBody } from "../../Types/apiTypes";
 
-const AddCarForm = () => {
+interface Props {
+  onSubmit: (data: CreateCarBody) => void;
+  isLoading?: boolean;
+}
+
+const AddCarForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
   const {
-    carFields,
-    ownerFields,
-    loading,
-    handleCarChange,
-    handleOwnerChange,
-    setCreateCar,
-    onSubmit,
-  } = useAddCarForm();
+    control,
+    handleSubmit,
+    formState: { isValid, isDirty },
+  } = useForm<CreateCarBody>({
+    mode: "onChange",
+    defaultValues: {
+      brand: "",
+      kilometers: "",
+      licensePlate: "",
+      model: "",
+      owner: {
+        address: "",
+        city: "",
+        email: "",
+        fullname: "",
+        phone: "",
+      },
+      year: "",
+    },
+  });
 
   return (
-    <form>
-      <Grid
-        container
-        component={Paper}
-        p={3}
-        spacing={2}
-        size={12}
-        sx={{
-          backgroundColor: "inherit",
-        }}
-      >
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <Grid container size={12} spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Box display="flex" justifyContent="center" alignItems="center">
+          <Box
+            bgcolor="inherit"
+            p={1}
+            display="flex"
+            flexDirection="column"
+            gap={3}
+            mt={2}
+          >
+            {/*Titular del vehículo*/}
             <Typography
-              variant="h4"
-              mb={2}
-              textAlign={"center"}
+              variant="h5"
               fontWeight={600}
               px={2}
               py={1}
@@ -47,36 +62,124 @@ const AddCarForm = () => {
               color="#FFF0FF"
               bgcolor={"#2c387e"}
             >
-              Titular
+              Datos del titular
             </Typography>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            justifyContent="center"
-            alignItems="center"
-            gap={2}
-            width={"100%"}
-          >
-            {ownerFields.map(({ label, name, value }, i) => (
-              <TextField
-                required={name !== "email"}
-                key={i}
-                fullWidth
-                label={label}
-                name={name}
-                value={value}
-                onChange={handleOwnerChange}
-              />
-            ))}
+            <Controller
+              name="owner.fullname"
+              control={control}
+              rules={{
+                required: { value: true, message: "Campo obligatorio" },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Nombre completo"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                  disabled={isLoading}
+                  error={field.value ? !!error : false}
+                  helperText={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+            <Controller
+              name="owner.phone"
+              control={control}
+              rules={{
+                required: { value: true, message: "Campo obligatorio" },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Teléfono"
+                  value={field.value}
+                  onChange={(e) => {
+                    const cleanedValue = e.target.value.replace(/[^\d+]/g, "");
+                    field.onChange(cleanedValue);
+                  }}
+                  disabled={isLoading}
+                  error={field.value ? !!error : false}
+                  helperText={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+            <Controller
+              name="owner.address"
+              control={control}
+              rules={{
+                required: { value: true, message: "Campo obligatorio" },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Dirección"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                  disabled={isLoading}
+                  error={field.value ? !!error : false}
+                  helperText={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+            <Controller
+              name="owner.city"
+              control={control}
+              rules={{
+                required: { value: true, message: "Campo obligatorio" },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Localidad"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                  disabled={isLoading}
+                  error={field.value ? !!error : false}
+                  helperText={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+            <Controller
+              name="owner.email"
+              control={control}
+              rules={{
+                pattern: {
+                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                  message: "Correo electrónico inválido",
+                },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  type="email"
+                  label="Correo electrónico"
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={isLoading}
+                  error={field.value ? !!error : false}
+                  helperText={error?.message}
+                  fullWidth
+                />
+              )}
+            />
           </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Box display="flex" justifyContent="center" alignItems="center">
+          <Box
+            bgcolor="inherit"
+            p={1}
+            display="flex"
+            flexDirection="column"
+            gap={3}
+            mt={2}
+          >
+            {/*Vehículo*/}
             <Typography
-              variant="h4"
-              mb={2}
-              textAlign={"center"}
+              variant="h5"
               fontWeight={600}
               px={2}
               py={1}
@@ -85,69 +188,146 @@ const AddCarForm = () => {
               color="#FFF0FF"
               bgcolor={"#2c387e"}
             >
-              Vehículo
+              Datos del vehículo
             </Typography>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            justifyContent="center"
-            alignItems="center"
-            gap={2}
-            width={"100%"}
-          >
-            {carFields.map(({ label, name, value }, i) =>
-              name !== "brand" ? (
+            <Controller
+              name="licensePlate"
+              control={control}
+              rules={{
+                required: { value: true, message: "Campo obligatorio" },
+                pattern: {
+                  value: /^([A-Z]{2}\d{3}[A-Z]{2}|[A-Z]{3}\d{3})$/,
+                  message: "Formato inválido",
+                },
+              }}
+              render={({ field, fieldState: { error } }) => (
                 <TextField
-                  key={i}
+                  {...field}
+                  label="Patente"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                  disabled={isLoading}
+                  error={field.value ? !!error : false}
+                  helperText={error?.message}
                   fullWidth
-                  label={label}
-                  name={name}
-                  value={value ?? ""}
-                  type="text"
-                  inputMode={
-                    ["year", "kilometers"].includes(name) ? "numeric" : "text"
-                  }
-                  onChange={handleCarChange}
                 />
-              ) : (
+              )}
+            />
+            <Controller
+              name="brand"
+              control={control}
+              rules={{
+                required: { value: true, message: "Campo obligatorio" },
+              }}
+              render={({ field, fieldState: { error } }) => (
                 <Autocomplete
-                  blurOnSelect
-                  fullWidth
-                  noOptionsText="No existe esa marca"
-                  key={i}
-                  onChange={(_, value) => {
-                    setCreateCar((prev) => ({
-                      ...prev,
-                      brand: value,
-                    }));
-                  }}
+                  {...field}
                   options={BRANDS}
+                  onChange={(_, value) => field.onChange(value?.toUpperCase())}
                   renderInput={(params) => (
-                    <TextField {...params} label={label} />
+                    <TextField
+                      {...params}
+                      label="Marca"
+                      onChange={(e) =>
+                        field.onChange(e.target.value.toUpperCase())
+                      }
+                      error={field.value ? !!error : false}
+                      helperText={error?.message}
+                    />
                   )}
                 />
-              )
-            )}
-          </Box>
-          <Box
-            mt={2}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Button
-              onClick={onSubmit}
-              loading={loading}
-              fullWidth
-              variant="contained"
-              sx={{ width: "50%" }}
-            >
-              Guardar
-            </Button>
+              )}
+            />
+            <Controller
+              name="model"
+              control={control}
+              rules={{
+                required: { value: true, message: "Campo obligatorio" },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Modelo"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                  disabled={isLoading}
+                  error={field.value ? !!error : false}
+                  helperText={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+            <Controller
+              name="year"
+              control={control}
+              rules={{
+                required: { value: true, message: "Campo obligatorio" },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Año"
+                  value={field.value}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^[\d]*$/.test(value)) {
+                      if (value === "") {
+                        field.onChange("");
+                      } else {
+                        field.onChange(Number(value));
+                      }
+                    }
+                  }}
+                  disabled={isLoading}
+                  error={field.value ? !!error : false}
+                  helperText={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+            <Controller
+              name="kilometers"
+              control={control}
+              rules={{
+                required: { value: true, message: "Campo obligatorio" },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Kilometraje"
+                  value={field.value}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^[\d]*$/.test(value)) {
+                      if (value === "") {
+                        field.onChange("");
+                      } else {
+                        field.onChange(Number(value));
+                      }
+                    }
+                  }}
+                  disabled={isLoading}
+                  error={field.value ? !!error : false}
+                  helperText={error?.message}
+                  fullWidth
+                />
+              )}
+            />
           </Box>
         </Grid>
       </Grid>
+      <Box display="flex" justifyContent="center" alignItems="center">
+        <Button
+          type="submit"
+          variant="contained"
+          startIcon={
+            isLoading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : null
+          }
+          disabled={isLoading || !isDirty || !isValid}
+        >
+          {isLoading ? "Guardando" : "Guardar"}
+        </Button>
+      </Box>
     </form>
   );
 };

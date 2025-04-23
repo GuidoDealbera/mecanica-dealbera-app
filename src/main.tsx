@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <CssBaseline />
-          <Toaster duration={3500} closeButton richColors />
+          <Toaster duration={3500} richColors />
           <App />
         </BrowserRouter>
       </ThemeProvider>

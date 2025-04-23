@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { carService } from "./Services/car.service";
 import { CreateCarBody, UpdateJob } from "../Types/apiTypes";
+import { handleApiError } from "../utils";
 
 export const fetchCars = createAsyncThunk(
   "cars/fetchCars",
@@ -32,8 +33,7 @@ export const createCar = createAsyncThunk(
     try {
       return await carService.create(body);
     } catch (error) {
-      rejectWithValue(error);
-      throw error;
+      return rejectWithValue(handleApiError(error));
     }
   }
 );
