@@ -1,7 +1,10 @@
+import { Box } from "@mui/material"
 
 const NewJob = () => {
   return (
-    <div>NewJob</div>
+    <Box>
+      
+    </Box>
   )
 }
 

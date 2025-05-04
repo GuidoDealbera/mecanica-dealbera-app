@@ -10,6 +10,11 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { BRANDS } from "../../utils";
 import { CreateCarBody } from "../../Types/apiTypes";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useClientQueries } from "../../Hooks/useClientQueries";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store/store";
+import { Client } from "../../Types/types";
 
 interface Props {
   onSubmit: (data: CreateCarBody) => void;
@@ -17,10 +22,16 @@ interface Props {
 }
 
 const AddCarForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
+  const { getAllClients } = useClientQueries();
+  const [selectedOwner, setSelectedOwner] = useState<Client | null | undefined>(
+    null
+  );
+
   const {
     control,
     handleSubmit,
     formState: { isValid, isDirty },
+    setValue,
   } = useForm<CreateCarBody>({
     mode: "onChange",
     defaultValues: {
@@ -38,6 +49,35 @@ const AddCarForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       year: "",
     },
   });
+  const { allClients } = useSelector((state: RootState) => state.clients);
+
+  const filterClient = useCallback(
+    (fullname: string | null) => {
+      const filtered = allClients.find(
+        (client) => client.fullname === fullname
+      );
+      setSelectedOwner(filtered);
+    },
+    [allClients]
+  );
+
+  const clientsNames = useMemo(() => {
+    return allClients.map((client) => client.fullname);
+  }, [allClients]);
+
+  useEffect(() => {
+    getAllClients();
+  }, []);
+
+  useEffect(() => {
+    if (selectedOwner) {
+      setValue("owner.address", selectedOwner.address);
+      setValue("owner.city", selectedOwner.city);
+      setValue("owner.email", selectedOwner.email);
+      setValue("owner.fullname", selectedOwner.fullname);
+      setValue("owner.phone", selectedOwner.phone);
+    }
+  }, [selectedOwner, setValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -70,18 +110,39 @@ const AddCarForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               rules={{
                 required: { value: true, message: "Campo obligatorio" },
               }}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
-                  {...field}
-                  label="Nombre completo"
-                  value={field.value}
-                  onChange={(e) => field.onChange(e.target.value.toUpperCase())}
-                  disabled={isLoading}
-                  error={field.value ? !!error : false}
-                  helperText={error?.message}
-                  fullWidth
-                />
-              )}
+              render={({ field }) =>
+                clientsNames.length > 0 ? (
+                  <Autocomplete
+                    {...field}
+                    options={clientsNames}
+                    value={field.value}
+                    onChange={(_, value) => {
+                      filterClient(value);
+                      field.onChange(value?.toUpperCase());
+                    }}
+                    disabled={isLoading}
+                    fullWidth
+                    renderInput={(params) => (
+                      <TextField
+                        label="Nombre completo"
+                        onChange={(e) =>
+                          field.onChange(e.target.value.toUpperCase())
+                        }
+                        {...params}
+                      />
+                    )}
+                  />
+                ) : (
+                  <TextField
+                    {...field}
+                    label="Nombre completo"
+                    onChange={(e) =>
+                      field.onChange(e.target.value.toUpperCase())
+                    }
+                    fullWidth
+                  />
+                )
+              }
             />
             <Controller
               name="owner.phone"
@@ -222,6 +283,7 @@ const AddCarForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               render={({ field, fieldState: { error } }) => (
                 <Autocomplete
                   {...field}
+                  freeSolo
                   options={BRANDS}
                   onChange={(_, value) => field.onChange(value?.toUpperCase())}
                   renderInput={(params) => (

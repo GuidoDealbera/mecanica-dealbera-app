@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CarState } from "../../Types/types";
-import { fetchCars, fetchCarByLicence, updateCar } from "../async.methods";
+import { fetchCars, fetchCarByLicence, updateCar } from "../carAsync.methods";
 
 const initialState: CarState = {
   allCars: [],
@@ -38,7 +38,7 @@ const carSlice = createSlice({
       })
       .addCase(fetchCars.rejected, (state, action) => {
         state.loadingStates.fetching_all = false;
-        state.error = action.payload as any;
+        state.error = action.payload as Error;
       })
       .addCase(fetchCars.fulfilled, (state, action) => {
         state.loadingStates.fetching_all = false;
@@ -50,11 +50,11 @@ const carSlice = createSlice({
       })
       .addCase(fetchCarByLicence.rejected, (state, action) => {
         state.loadingStates.fetching = false;
-        state.error = action.payload as any;
+        state.error = action.payload as Error;
       })
       .addCase(fetchCarByLicence.fulfilled, (state, action) => {
         state.loadingStates.fetching = false;
-        state.car = action.payload
+        state.car = action.payload.result
       })
       //PATCH's
       .addCase(updateCar.pending, (state) => {
@@ -63,7 +63,7 @@ const carSlice = createSlice({
       })
       .addCase(updateCar.rejected, (state, action) => {
         state.loadingStates.updating = false;
-        state.error = action.payload as any
+        state.error = action.payload as Error
       })
       .addCase(updateCar.fulfilled, (state, action) => {
         state.loadingStates.updating = false;

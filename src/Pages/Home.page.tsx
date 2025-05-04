@@ -1,9 +1,17 @@
 import { DirectionsCarFilled, PostAdd } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const handleNavigate = useCallback(
+    async (route: string) => {
+      await navigate(route);
+    },
+    [navigate]
+  );
+
   return (
     <Box
       display="flex"
@@ -22,14 +30,19 @@ const Home = () => {
       </Typography>
       <Box display="flex" justifyContent="space-evenly" width={"100%"}>
         <Button
-        onClick={() => navigate('/cars/new')}
+          onClick={() => handleNavigate("/cars/new")}
           variant="contained"
           startIcon={<DirectionsCarFilled />}
           sx={{ py: 2 }}
         >
           Ingresar vehículo
         </Button>
-        <Button variant="contained" startIcon={<PostAdd />} sx={{ py: 2 }}>
+        <Button
+          variant="contained"
+          startIcon={<PostAdd />}
+          sx={{ py: 2 }}
+          onClick={() => handleNavigate("/cars/add-job")}
+        >
           Nuevo trabajo
         </Button>
       </Box>

@@ -107,18 +107,20 @@ const theme = createTheme({
     },
     MuiButton: {
       styleOverrides: {
-        root: {
-          "&:disabled": {
-            backgroundColor: baseTheme.palette.primary.dark,
-            color: baseTheme.palette.primary.light
-          },
-          backgroundColor: baseTheme.palette.primary.dark,
-          color: "white",
-          "&:hover": {
-            backgroundColor: baseTheme.palette.primary.main
-          }
-        }
-      }
+        root: ({ ownerState, theme }) => ({
+          ...(ownerState.variant === "contained" && {
+            backgroundColor: theme.palette.primary.dark,
+            color: "white",
+            "&:hover": {
+              backgroundColor: theme.palette.primary.main,
+            },
+            "&:disabled": {
+              backgroundColor: theme.palette.primary.dark,
+              color: theme.palette.primary.light,
+            },
+          }),
+        }),
+      },
     },
     MuiOutlinedInput: {
       styleOverrides: {

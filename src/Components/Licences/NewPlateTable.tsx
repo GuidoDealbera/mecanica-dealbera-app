@@ -4,14 +4,15 @@ import { formatLicence } from "../../utils";
 interface Props {
   licence: string;
   width?: string | number;
+  dialog?: boolean;
 }
 
-const NewPlateTable: React.FC<Props> = ({ licence, width }) => {
+const NewPlateTable: React.FC<Props> = ({ licence, dialog, width }) => {
   return (
     <Box
       position="relative"
       width="fit-content"
-      mt={2.5}
+      mt={dialog ? 0 : 2.5}
     >
       <Box component="img" src="/newLicence.png" width={width ?? 110} height={40} />
       <Box

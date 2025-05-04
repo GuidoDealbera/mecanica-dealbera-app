@@ -5,9 +5,10 @@ import { formatLicence } from "../../utils";
 interface Props {
   licence: string;
   width?: string | number;
+  dialog?: boolean;
 }
 
-const OldPlateTable: React.FC<Props> = ({ licence, width }) => {
+const OldPlateTable: React.FC<Props> = ({ licence, dialog, width }) => {
   const textRef = useRef<HTMLSpanElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -31,7 +32,7 @@ const OldPlateTable: React.FC<Props> = ({ licence, width }) => {
   }, [licence]);
 
   return (
-    <Box position="relative" width="fit-content" mt={2.5}>
+    <Box position="relative" width="fit-content" mt={dialog ? 0 : 2.5}>
       <Box
         component="img"
         src="/oldLicence.png"

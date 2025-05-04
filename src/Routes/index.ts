@@ -18,7 +18,7 @@ const routes: RouteObject[] = [
         element: React.createElement(AddCar)
     },
     {
-        path: '/add-job',
+        path: '/cars/add-job',
         element: React.createElement(NewJob)
     },
     {

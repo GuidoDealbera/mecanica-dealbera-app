@@ -1,131 +1,138 @@
 import {
   Box,
   Button,
-  IconButton,
-  Tooltip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Typography,
 } from "@mui/material";
-import { useSelector } from "react-redux";
-import { RootState } from "../Store/store";
-import { useEffect } from "react";
-import { useQueries } from "../Hooks/useQueries";
+import { useEffect, useMemo, useState } from "react";
+import { useCarQueries } from "../Hooks/useCarQueries";
 import CustomDataGrid from "../Components/CustomDataGrid";
-import { GridColDef } from "@mui/x-data-grid";
-import TableCell from "../Components/TableCell";
 import { useNavigate } from "react-router-dom";
-import { Add, Delete, Edit, Visibility } from "@mui/icons-material";
+import { Add, Refresh } from "@mui/icons-material";
+import FilterByLicence from "../Components/SearchBars/FilterByLicence";
+import { useTable } from "../Hooks/useTable";
+import TablePlate from "../Components/Licences/TablesPlates";
 
 const Cars = () => {
   const navigate = useNavigate();
-  const { getAllCars } = useQueries();
-  const { allCars } = useSelector((state: RootState) => state.cars);
+  const { carsColumns, openDialog, selectedLicence, setOpenDialog, handleDelete } =
+    useTable();
+  const {
+    getAllCars,
+    refresh,
+    refreshing,
+    loading,
+    allCars,
+    loadingStates,
+  } = useCarQueries();
+  const [licenceFilter, setLicenceFilter] = useState<string>("");
+
+  
   useEffect(() => {
     getAllCars();
   }, []);
 
-  const columns: GridColDef[] = [
-    {
-      field: "licensePlate",
-      renderHeader: () => <Typography>PATENTE</Typography>,
-      align: "center",
-      minWidth: 120,
-      maxWidth: 150,
-      renderCell: (params) => (
-        <TableCell value={params.value} field="licence" />
-      ),
-    },
-    {
-      field: "owner",
-      renderHeader: () => <Typography>DUEÑO</Typography>,
-      align: "center",
-      renderCell: (params) => <TableCell value={params.value.fullname} />,
-    },
-    {
-      field: "brand",
-      renderHeader: () => <Typography>MARCA</Typography>,
-      align: "center",
-      renderCell: (params) => <TableCell value={params.value} />,
-    },
-    {
-      field: "model",
-      renderHeader: () => <Typography>MODELO</Typography>,
-      align: "center",
-      renderCell: (params) => <TableCell value={params.value} />,
-    },
-    {
-      field: "year",
-      renderHeader: () => <Typography>AÑO</Typography>,
-      align: "center",
-      minWidth: 100,
-      maxWidth: 100,
-      renderCell: (params) => <TableCell value={params.value} />,
-    },
-    {
-      field: "kilometers",
-      renderHeader: () => <Typography>KILOMETRAJE</Typography>,
-      align: "center",
-      minWidth: 150,
-      maxWidth: 150,
-      renderCell: (params) => (
-        <TableCell value={params.value.toLocaleString("es-AR")} />
-      ),
-    },
-    {
-      field: "actions",
-      renderHeader: () => <Typography>ACCIONES</Typography>,
-      align: "center",
-      minWidth: 150,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            mt: 0.5,
-          }}
-        >
-          <IconButton>
-            <Tooltip
-              title="Editar"
-              slotProps={{ tooltip: { sx: { bgcolor: "grey" } } }}
-            >
-              <Edit />
-            </Tooltip>
-          </IconButton>
-          <IconButton color="primary" onClick={() => navigate(`/cars/${params.row.licensePlate}`)}>
-            <Tooltip title="Ver">
-              <Visibility />
-            </Tooltip>
-          </IconButton>
-          <IconButton sx={{ color: "error.dark" }}>
-            <Tooltip title='Eliminar'
-              slotProps={{
-                tooltip: {
-                  sx: {
-                    bgcolor: 'error.dark'
-                  }
-                }
-              }}
-            >
-              <Delete />
-            </Tooltip>
-          </IconButton>
-        </Box>
-      ),
-    },
-  ];
+  const filteredCars = useMemo(() => {
+    if (!licenceFilter) return allCars;
+    return allCars.filter(
+      (car) =>
+        car.licensePlate.toLowerCase().trim() ===
+        licenceFilter.toLowerCase().trim()
+    );
+  }, [allCars, licenceFilter]);
+
+  const filterLicence = useMemo(() => {
+    return allCars.find((car) => car.licensePlate === selectedLicence);
+  }, [allCars, selectedLicence]);
+  const isLoading = refreshing || loading || loadingStates.fetching_all;
   return (
     <Box display="flex" flexDirection="column" gap={5}>
-      <Box display="flex" justifyContent="flex-end" alignItems="center">
-        <Button
-          startIcon={<Add />}
-          variant="contained"
-          onClick={() => navigate("/cars/new")}
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h4" color="#FFF0FF">
+          Listado de vehículos
+        </Typography>
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="center"
+          gap={1}
         >
-          Añadir automóvil
-        </Button>
+          <Button
+            onClick={refresh}
+            variant="contained"
+            disabled={isLoading}
+            startIcon={isLoading ? <CircularProgress size={20} /> : <Refresh />}
+          >
+            {refreshing || loadingStates.fetching_all
+              ? "Actualizando"
+              : "Actualizar"}
+          </Button>
+          <Button
+            startIcon={<Add />}
+            variant="contained"
+            disabled={isLoading}
+            onClick={() => navigate("/cars/new")}
+          >
+            Añadir automóvil
+          </Button>
+        </Box>
       </Box>
-      <CustomDataGrid rows={allCars} columns={columns} />
+      <FilterByLicence onFilterChange={setLicenceFilter} />
+      <CustomDataGrid
+        rows={filteredCars}
+        columns={carsColumns}
+        localeText={{ noRowsLabel: "No hay vehículos registrados" }}
+        loading={isLoading}
+      />
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>
+          {"Estás por eliminar el automóvil con la siguiente patente:"}
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TablePlate
+            dialog={true}
+            licence={filterLicence ? filterLicence.licensePlate : ""}
+          />
+          <DialogContentText>
+            ¿Estás seguro de querer eliminarlo?
+          </DialogContentText>
+          <DialogActions>
+            <Button sx={{
+              "&:hover": {
+                bgcolor: "primary.dark",
+                color: "white"
+              }
+            }} variant="outlined" onClick={() => setOpenDialog(false)}>
+              Cancelar
+            </Button>
+            <Button
+              color="error"
+              variant="outlined"
+              sx={{
+                "&:hover": {
+                  bgcolor: "error.dark",
+                  color: "white",
+                },
+              }}
+              onClick={() => handleDelete(filterLicence?.licensePlate)}
+            >
+              Eliminar
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

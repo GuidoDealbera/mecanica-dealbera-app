@@ -25,6 +25,7 @@ export interface Car {
 }
 
 export interface Jobs {
+  id: string;
   price: number;
   description: string;
   isThirdParty: boolean;

@@ -29,7 +29,13 @@ export interface CreateCarBody {
 }
 
 export interface APIResponse {
-  statusCode: number,
+  statusCode: number;
   message: string | string[];
-  result: any
+  result: any;
+}
+
+export interface UpdateCar {
+  owner?: Partial<Client>;
+  jobs?: Partial<Jobs>;
+  kilometers?: number;
 }

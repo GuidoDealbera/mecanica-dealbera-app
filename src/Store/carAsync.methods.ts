@@ -9,8 +9,7 @@ export const fetchCars = createAsyncThunk(
     try {
       return await carService.getAll();
     } catch (error) {
-      rejectWithValue(error);
-      throw error;
+      return rejectWithValue(handleApiError(error));
     }
   }
 );
@@ -21,8 +20,7 @@ export const fetchCarByLicence = createAsyncThunk(
     try {
       return await carService.getByLicence(licence);
     } catch (error) {
-      rejectWithValue(error);
-      throw error;
+      return rejectWithValue(handleApiError(error));
     }
   }
 );
@@ -44,18 +42,18 @@ export const updateCar = createAsyncThunk(
     try {
       return await carService.update(id);
     } catch (error) {
-      rejectWithValue(error);
-      throw error;
+      return rejectWithValue(handleApiError(error));
     }
   }
 );
 
 export const deleteCar = createAsyncThunk(
   "cars/deleteCar",
-  async (_, { rejectWithValue }) => {
+  async (licence: string, { rejectWithValue }) => {
     try {
+      return await carService.delete(licence)
     } catch (error) {
-      rejectWithValue(error);
+      return rejectWithValue(handleApiError(error));
     }
   }
 );
@@ -66,7 +64,7 @@ export const updateJobInCar = createAsyncThunk(
     try {
       return await carService.updateJob(licence, jobId, body);
     } catch (error) {
-      rejectWithValue(error);
+      return rejectWithValue(handleApiError(error));
     }
   }
 );

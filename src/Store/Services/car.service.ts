@@ -11,18 +11,10 @@ export const carService = {
       .data;
   },
   getAll: async (): Promise<APIResponse> => {
-    try {
-      return (await apiAxios.get<APIResponse>(`${SERVER_URL}/all`)).data;
-    } catch (error) {
-      throw handleApiError(error);
-    }
+    return (await apiAxios.get<APIResponse>(`${SERVER_URL}/all`)).data;
   },
-  getByLicence: async (licence: string): Promise<Car> => {
-    try {
-      return (await apiAxios.get<Car>(`${SERVER_URL}/${licence}`)).data;
-    } catch (error) {
-      throw handleApiError(error);
-    }
+  getByLicence: async (licence: string): Promise<APIResponse> => {
+    return (await apiAxios.get<APIResponse>(`${SERVER_URL}/${licence}`)).data;
   },
   update: async (id: string): Promise<Car> => {
     try {
@@ -31,12 +23,8 @@ export const carService = {
       throw handleApiError(error);
     }
   },
-  delete: async (licence: string): Promise<any> => {
-    try {
-      return (await apiAxios.delete(`${SERVER_URL}/delete/${licence}`)).data;
-    } catch (error) {
-      throw handleApiError(error);
-    }
+  delete: async (licence: string): Promise<APIResponse> => {
+    return (await apiAxios.delete<APIResponse>(`${SERVER_URL}/delete/${licence}`)).data;
   },
   updateJob: async (
     licence: string,

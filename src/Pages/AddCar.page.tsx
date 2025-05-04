@@ -1,11 +1,11 @@
 import { Box, Paper, Typography } from "@mui/material";
 import AddCarForm from "../Components/Forms/AddCarForm";
-import { useQueries } from "../Hooks/useQueries";
+import { useCarQueries } from "../Hooks/useCarQueries";
 import { CreateCarBody } from "../Types/apiTypes";
 import { ToastError } from "../ToastAlerts/alerts";
 
 const AddCar = () => {
-  const { loading, create } = useQueries();
+  const { loading, create } = useCarQueries();
   const handleSubmit = async (data: CreateCarBody) => {
     try {
       await create(data);
