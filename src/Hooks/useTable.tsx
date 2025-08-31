@@ -1,7 +1,7 @@
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import TableCell from "../Components/TableCell";
-import { Delete, Edit, Visibility } from "@mui/icons-material";
+import { Delete, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useState } from "react";
 import { useCarQueries } from "./useCarQueries";
@@ -88,14 +88,6 @@ export const useTable = () => {
             mt: 0.5,
           }}
         >
-          <IconButton>
-            <Tooltip
-              title="Editar"
-              slotProps={{ tooltip: { sx: { bgcolor: "grey" } } }}
-            >
-              <Edit />
-            </Tooltip>
-          </IconButton>
           <IconButton
             color="primary"
             onClick={() => navigate(`/cars/${params.row.licensePlate}`)}

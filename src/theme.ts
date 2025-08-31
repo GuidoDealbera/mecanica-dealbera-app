@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 import type {} from "@mui/x-data-grid/themeAugmentation";
+import type {} from '@mui/x-date-pickers/themeAugmentation'
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -54,6 +55,51 @@ const baseTheme = createTheme({
 const theme = createTheme({
   ...baseTheme,
   components: {
+    MuiPickersCalendarHeader: {
+      styleOverrides: {
+        label: {
+          textTransform: 'capitalize',
+        },
+      },
+    },
+    MuiDayCalendar: {
+      styleOverrides: {
+        root: {
+          textTransform: 'capitalize',
+        },
+        weekDayLabel: {
+          textTransform: 'capitalize',
+        },
+      },
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          textTransform: 'capitalize',
+        },
+      },
+    },
+    MuiMonthCalendar: {
+      styleOverrides: {
+        button: {
+          textTransform: 'capitalize',
+        },
+      },
+    },
+    MuiYearCalendar: {
+      styleOverrides: {
+        button: {
+          textTransform: 'capitalize',
+        },
+      },
+    },
+    MuiPickersToolbar: {
+      styleOverrides: {
+        root: {
+          textTransform: 'capitalize',
+        },
+      },
+    },
     MuiDataGrid: {
       styleOverrides: {
         root: {
@@ -108,7 +154,7 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: ({ ownerState, theme }) => ({
-          ...(ownerState.variant === "contained" && {
+          ...(ownerState.variant === "contained" && ownerState.color === 'primary' && {
             backgroundColor: theme.palette.primary.dark,
             color: "white",
             "&:hover": {
@@ -129,16 +175,22 @@ const theme = createTheme({
           "& .MuiOutlinedInput-notchedOutline": {
             borderColor: baseTheme.palette.grey[500],
           },
-          "&:hover .MuiOutlinedInput-notchedOutline": {
+          "&:hover:not(.Mui-disabled):not(.Mui-error) .MuiOutlinedInput-notchedOutline": {
             borderColor: baseTheme.palette.primary.contrastText,
           },
-          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+          "&.Mui-focused:not(.Mui-error) .MuiOutlinedInput-notchedOutline": {
             borderColor: baseTheme.palette.primary.contrastText,
             borderWidth: 2,
           },
+          "&.Mui-disabled .MuiOutlinedInput-notchedOutlined": {
+            borderColor: baseTheme.palette.grey[100]
+          },
+          "&.Mui-disabled": {
+            pointerEvents: 'none'
+          }
         },
         input: {
-          color: baseTheme.palette.primary.contrastText
+          color: baseTheme.palette.primary.contrastText,
         }
       },
     },

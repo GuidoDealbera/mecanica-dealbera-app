@@ -29,7 +29,7 @@ const AddCar = () => {
       >
         Registrar nuevo vehículo
       </Typography>
-      <AddCarForm isLoading={loading} onSubmit={handleSubmit} />
+      <AddCarForm isLoading={loading} onSubmit={handleSubmit} isEditing={false}/>
     </Box>
   );
 };

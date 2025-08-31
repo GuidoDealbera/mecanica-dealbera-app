@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { carService } from "./Services/car.service";
-import { CreateCarBody, UpdateJob } from "../Types/apiTypes";
+import { CreateCarBody, CreateCarJob, UpdateJobBody } from "../Types/apiTypes";
 import { handleApiError } from "../utils";
 
 export const fetchCars = createAsyncThunk(
@@ -36,11 +36,14 @@ export const createCar = createAsyncThunk(
   }
 );
 
-export const updateCar = createAsyncThunk(
-  "cars/updateCar",
-  async (id: string, { rejectWithValue }) => {
+export const createJob = createAsyncThunk(
+  "cars/createJob",
+  async (
+    { id, data }: { id: string; data: CreateCarJob },
+    { rejectWithValue }
+  ) => {
     try {
-      return await carService.update(id);
+      return await carService.createJob(id, data);
     } catch (error) {
       return rejectWithValue(handleApiError(error));
     }
@@ -51,7 +54,7 @@ export const deleteCar = createAsyncThunk(
   "cars/deleteCar",
   async (licence: string, { rejectWithValue }) => {
     try {
-      return await carService.delete(licence)
+      return await carService.delete(licence);
     } catch (error) {
       return rejectWithValue(handleApiError(error));
     }
@@ -60,7 +63,14 @@ export const deleteCar = createAsyncThunk(
 
 export const updateJobInCar = createAsyncThunk(
   "cars/updateJobInCar",
-  async ({ licence, jobId, body }: UpdateJob, { rejectWithValue }) => {
+  async (
+    {
+      licence,
+      jobId,
+      body,
+    }: { licence: string; jobId: string; body: UpdateJobBody },
+    { rejectWithValue }
+  ) => {
     try {
       return await carService.updateJob(licence, jobId, body);
     } catch (error) {

@@ -1,6 +1,10 @@
+import 'reflect-metadata'
+import './database/endpoints/car.endpoints'
+import './database/endpoints/client.endpoints'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { AppDataSource } from './database/data-source'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -24,12 +28,22 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 
 let win: BrowserWindow | null
 
-function createWindow() {
+async function createWindow() {
+
+  try {
+    await AppDataSource.initialize()
+    console.log('DB Inicializada')
+  } catch (error) {
+    console.log('Error al inicializar DB', error)
+  }
+
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
+      nodeIntegration: false,
+      contextIsolation: true
     },
   })
 
@@ -65,6 +79,12 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+app.on("before-quit", async () => {
+  if (AppDataSource.isInitialized) {
+    await AppDataSource.destroy();
+  }
+});
 
 app.whenReady().then(() => {
   createWindow();

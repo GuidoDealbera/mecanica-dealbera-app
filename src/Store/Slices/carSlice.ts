@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CarState } from "../../Types/types";
-import { fetchCars, fetchCarByLicence, updateCar } from "../carAsync.methods";
+import { fetchCars, fetchCarByLicence, createJob, updateJobInCar } from "../carAsync.methods";
 
 const initialState: CarState = {
   allCars: [],
@@ -54,22 +54,36 @@ const carSlice = createSlice({
       })
       .addCase(fetchCarByLicence.fulfilled, (state, action) => {
         state.loadingStates.fetching = false;
-        state.car = action.payload.result
+        state.car = action.payload.result;
       })
       //PATCH's
-      .addCase(updateCar.pending, (state) => {
+      .addCase(createJob.pending, (state) => {
         state.loadingStates.updating = true;
-        state.error = null
+        state.error = null;
       })
-      .addCase(updateCar.rejected, (state, action) => {
+      .addCase(createJob.rejected, (state, action) => {
         state.loadingStates.updating = false;
-        state.error = action.payload as Error
+        state.error = action.payload as Error;
       })
-      .addCase(updateCar.fulfilled, (state, action) => {
+      .addCase(createJob.fulfilled, (state, action) => {
         state.loadingStates.updating = false;
-        const index = state.allCars.findIndex((car) => car.id === action.payload?.id)
-        if(index !== -1){
-          state.allCars[index] = action.payload
+        if (state.car) {
+          state.car.jobs = action.payload.result.jobs;
+        }
+      })
+      .addCase(updateJobInCar.pending, state => {
+        state.loadingStates.updating = true;
+        state.error = null;
+      })
+      .addCase(updateJobInCar.rejected, (state, action) => {
+        state.loadingStates.updating = false;
+        state.error = action.payload as Error;
+      })
+      .addCase(updateJobInCar.fulfilled, (state, action) => {
+        state.loadingStates.updating = false;
+        if (state.car) {
+          const jobIndex = state.car.jobs.findIndex(job => job.id === action.payload.result.id)
+          state.car.jobs[jobIndex] = action.payload.result;
         }
       })
   },

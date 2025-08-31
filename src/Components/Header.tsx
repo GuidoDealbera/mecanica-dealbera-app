@@ -2,14 +2,15 @@ import { ArrowBack } from "@mui/icons-material";
 import { AppBar, Box, Button, Fab, Toolbar, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import dayjs, {Dayjs} from 'dayjs'
 
 const Header = () => {
   const navigate = useNavigate();
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<Dayjs>(dayjs());
   const isHomePage = location.pathname === '/'
   useEffect(() => {
     const interval = setInterval(() => {
-      setDate(new Date());
+      setDate(dayjs());
     }, 1000);
 
     return () => clearInterval(interval);
@@ -28,12 +29,6 @@ const Header = () => {
       text: "Autos",
     },
   ];
-
-  const timeOptions: Intl.DateTimeFormatOptions = {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true, // Cambialo a false si preferís formato 24 hs
-  };
 
   return (
     <AppBar component="nav" sx={{ mt: 5 }}>
@@ -87,10 +82,10 @@ const Header = () => {
         </Box>
         <Box display='flex' gap={1}>
           <Typography color="#3E3E3E" fontWeight={700} display={{ xs: "none", sm: "block" }}>
-            {date.toLocaleDateString()}
+            {date.format("DD/MM/YYYY")}
           </Typography>
           <Typography color="#3E3E3E" fontWeight={700} display={{ xs: "none", sm: "block" }}>
-            {date.toLocaleTimeString([], timeOptions)}
+            {date.format("HH:mm")}
           </Typography>
         </Box>
       </Toolbar>

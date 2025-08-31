@@ -1,11 +1,5 @@
-import { CarsBrands } from "../utils";
+import type { CarBrand } from "../utils";
 import { Client, Jobs } from "./types";
-
-export interface UpdateJob {
-  licence: string;
-  jobId: string;
-  body: UpdateJobBody;
-}
 
 export enum JobStatus {
   IN_PROGRESS = "in-progress",
@@ -20,17 +14,17 @@ export interface UpdateJobBody {
 
 export interface CreateCarBody {
   licensePlate: string;
-  brand: CarsBrands | string | null;
+  brand: CarBrand;
   model: string;
-  year: number | "";
+  year: number;
   owner: Omit<Client, "id" | "cars">;
   jobs?: Jobs[];
-  kilometers: number | "";
+  kilometers: number;
 }
 
 export interface APIResponse {
-  statusCode: number;
-  message: string | string[];
+  status: 'success' | 'failed';
+  message: string;
   result: any;
 }
 
@@ -38,4 +32,11 @@ export interface UpdateCar {
   owner?: Partial<Client>;
   jobs?: Partial<Jobs>;
   kilometers?: number;
+}
+
+export interface CreateCarJob {
+  price: number | "";
+  description: string;
+  isThirdParty: boolean;
+  status: JobStatus;
 }

@@ -21,7 +21,7 @@ const NewLicencePlate: React.FC<Props> = ({ licence, width }) => {
         left={5}
         right={5}
       >
-        <Typography fontFamily={"FE-FONT"} textAlign="center" fontSize={40}>
+        <Typography fontFamily={"FE-FONT"} textAlign="center" fontSize={40} color="black">
           {formatLicence(licence)}
         </Typography>
       </Box>

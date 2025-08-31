@@ -1,4 +1,4 @@
-import { CarsBrands } from "../utils";
+import type { CarBrand } from "../utils";
 import { JobStatus } from "./apiTypes";
 
 export interface Client {
@@ -7,7 +7,7 @@ export interface Client {
   phone: string;
   address: string;
   city: string;
-  email?: string | null;
+  email?: string;
   cars?: Car[];
 }
 
@@ -15,7 +15,7 @@ export interface Car {
   id: string;
   licensePlate: string;
   model: string;
-  brand: CarsBrands;
+  brand: CarBrand;
   year: number;
   jobs: Jobs[];
   kilometers: number;

@@ -1,7 +1,3 @@
-let byPassNavigation = false;
-export const setByPassNavigation = (value: boolean) =>
-  (byPassNavigation = value);
-export const getByPassNavigation = () => byPassNavigation;
 export const CarsBrands = {
   Coradir: "Coradir",
   VoltMotors: "Volt Motors",
@@ -49,15 +45,3 @@ export const CarsBrands = {
 } as const
 
 export type CarBrand = typeof CarsBrands[keyof typeof CarsBrands]
-
-export const BRANDS = Object.values(CarsBrands)
-  .map((brand) => brand.toUpperCase())
-  .sort((a, b) => a.localeCompare(b));
-
-export const formatLicence = (licencePlate: string): string => {
-  const licence = licencePlate.toUpperCase();
-  if (licence.length === 7) {
-    return `${licence.slice(0, 2)} ${licence.slice(2, 5)} ${licence.slice(5)}`;
-  }
-  return `${licence.slice(0, 3)} ${licence.slice(3)}`;
-};

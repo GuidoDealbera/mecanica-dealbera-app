@@ -1,16 +1,23 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Store/store";
-import { CreateCarBody } from "../Types/apiTypes";
+import { CreateCarBody, CreateCarJob, UpdateJobBody } from "../Types/apiTypes";
 import {
   createCar,
   fetchCarByLicence,
   fetchCars,
   deleteCar,
+  createJob,
+  updateJobInCar,
 } from "../Store/carAsync.methods";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastError, ToastSuccess } from "../ToastAlerts/alerts";
-import { cleanCarsState, cleanCarState, cleanError } from "../Store/Slices/carSlice";
+import {
+  cleanCarsState,
+  cleanCarState,
+  cleanError,
+} from "../Store/Slices/carSlice";
+import { setByPassNavigation } from "../utils";
 
 export const useCarQueries = () => {
   const navigate = useNavigate();
@@ -30,11 +37,12 @@ export const useCarQueries = () => {
           ...body,
           owner: {
             ...body.owner,
-            email: body.owner.email ? body.owner.email : null,
+            email: body.owner.email ?? undefined,
           },
         };
         const response = await dispatch(createCar(data)).unwrap();
-        ToastSuccess(response.message as string);
+        ToastSuccess('Automóvil registrado exitosamente');
+        setByPassNavigation(true);
         navigate("/cars");
         return response;
       } catch (error: any) {
@@ -118,17 +126,50 @@ export const useCarQueries = () => {
     [dispatch]
   );
 
-  const clean = useCallback(() => {
-    dispatch(cleanCarState())
+  const createCarJob = useCallback(
+    async (id: string, data: CreateCarJob) => {
+      setLoading(true);
+      try {
+        const response = await dispatch(createJob({ id, data })).unwrap();
+        ToastSuccess(response.message as string);
+        setByPassNavigation(true);
+        navigate("/cars");
+        return response;
+      } catch (error: any) {
+        ToastError(error.message);
+        return error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [dispatch, navigate]
+  );
+
+  const updateJob = useCallback(async(licence: string, jobId: string, body: UpdateJobBody) => {
+    setLoading(true);
+    try {
+      const response = await dispatch(updateJobInCar({licence, jobId, body})).unwrap();
+      ToastSuccess(response.message as string);
+      return response;
+    } catch (error: any) {
+      ToastError(error.message);
+      return error;
+    } finally {
+      setLoading(false);
+    }
   }, [dispatch])
+
+  const clean = useCallback(() => {
+    dispatch(cleanCarState());
+  }, [dispatch]);
 
   const cleanCars = useCallback(() => {
-    dispatch(cleanCarsState())
-  }, [dispatch])
+    dispatch(cleanCarsState());
+  }, [dispatch]);
 
   const clearError = useCallback(() => {
-    dispatch(cleanError())
-  }, [dispatch])
+    dispatch(cleanError());
+  }, [dispatch]);
 
   return {
     loading,
@@ -140,11 +181,13 @@ export const useCarQueries = () => {
     create,
     getAllCars,
     getCarDetail,
+    createCarJob,
+    updateJob,
     refresh,
     deleteOneCar,
     refreshCar,
     clean,
     cleanCars,
-    clearError
+    clearError,
   };
 };

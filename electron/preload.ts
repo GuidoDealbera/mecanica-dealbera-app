@@ -1,4 +1,5 @@
 import { ipcRenderer, contextBridge } from 'electron'
+import { CreateCarDto } from './database/Types/car.dto'
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -21,4 +22,8 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 
   // You can expose other APTs you need here.
   // ...
+})
+
+contextBridge.exposeInMainWorld('api', {
+  createCar: (car: CreateCarDto) => ipcRenderer.invoke("car:create", car)
 })
