@@ -1,10 +1,10 @@
 import 'reflect-metadata'
-import './database/endpoints/car.endpoints'
-import './database/endpoints/client.endpoints'
+import './database/Endpoints/car.endpoints'
+import './database/Endpoints/client.endpoints'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { AppDataSource } from './database/data-source'
+import { AppDataSource, initializeDB } from './database/dataSource'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -30,12 +30,7 @@ let win: BrowserWindow | null
 
 async function createWindow() {
 
-  try {
-    await AppDataSource.initialize()
-    console.log('DB Inicializada')
-  } catch (error) {
-    console.log('Error al inicializar DB', error)
-  }
+  await initializeDB()
 
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),

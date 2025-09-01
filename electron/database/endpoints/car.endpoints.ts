@@ -1,6 +1,4 @@
 import { ipcMain } from "electron";
-import { AppDataSource } from "../data-source";
-import { Car } from "../entities/car.entity";
 import {
   CreateCarDto,
   Jobs,
@@ -8,12 +6,12 @@ import {
   UpdateCarDto,
   UpdateJobDto,
 } from "../Types/car.dto";
-import { Client } from "../entities/clients.entity";
 import { v4 } from "uuid";
+import { getRepositories } from "../dataSource";
 
 ipcMain.handle("car:create", async (_event, createCarDto: CreateCarDto) => {
-  const carRepo = AppDataSource.getRepository(Car);
-  const clientRepo = AppDataSource.getRepository(Client);
+  const carRepo = getRepositories().carRepository
+  const clientRepo = getRepositories().clientRepository;
   const existingCar = await carRepo.findOne({
     where: {
       licensePlate: createCarDto.licensePlate,
@@ -55,13 +53,13 @@ ipcMain.handle("car:create", async (_event, createCarDto: CreateCarDto) => {
       updatedAt: new Date(),
     })) || [];
 
+  const savedOwner = await clientRepo.save(owner);
   const newCar = carRepo.create({
     ...createCarDto,
     jobs,
-    owner,
+    owner: savedOwner,
   });
 
-  await clientRepo.save(owner);
   await carRepo.save(newCar);
   return {
     status: "success",
@@ -70,16 +68,18 @@ ipcMain.handle("car:create", async (_event, createCarDto: CreateCarDto) => {
 });
 
 ipcMain.handle("car:get-all", async () => {
-  const repo = AppDataSource.getRepository(Car);
-  return await repo.find({
-    relations: ["owner"],
+  const repo = getRepositories().carRepository;
+  const cars = await repo.find({
+    relations: ['owner']
   });
+  console.log(cars)
+  return cars
 });
 
 ipcMain.handle(
   "car:get-by-license",
   async (_, licence: CreateCarDto["licensePlate"]) => {
-    const repo = AppDataSource.getRepository(Car);
+    const repo = getRepositories().carRepository;
     const car = await repo.findOne({
       where: {
         licensePlate: licence,
@@ -103,8 +103,8 @@ ipcMain.handle(
 ipcMain.handle(
   "car:update",
   async (_, id: string, updateCarDto: UpdateCarDto) => {
-    const carRepo = AppDataSource.getRepository(Car);
-    const clientRepo = AppDataSource.getRepository(Client);
+    const carRepo = getRepositories().carRepository;
+    const clientRepo = getRepositories().clientRepository;
     const { jobs, owner, kilometers } = updateCarDto;
     const car = await carRepo.findOne({
       where: {
@@ -183,8 +183,8 @@ ipcMain.handle(
 ipcMain.handle(
   "car:delete",
   async (_, license: CreateCarDto["licensePlate"]) => {
-    const carRepo = AppDataSource.getRepository(Car);
-    const clientRepo = AppDataSource.getRepository(Client);
+    const carRepo = getRepositories().carRepository;
+    const clientRepo = getRepositories().clientRepository;
     const carToDelete = await carRepo.findOne({
       where: {
         licensePlate: license,
@@ -218,7 +218,7 @@ ipcMain.handle(
 );
 
 ipcMain.handle("car:find-jobs", async () => {
-  const repo = AppDataSource.getRepository(Car);
+  const repo = getRepositories().carRepository;
   const cars = await repo.find();
   const response = cars
     .filter((car) => Array.isArray(car.jobs) && car.jobs.length > 0)
@@ -233,7 +233,7 @@ ipcMain.handle("car:find-jobs", async () => {
 ipcMain.handle(
   "car:update-job",
   async (_, license: string, jobId: string, updateJobDto: UpdateJobDto) => {
-    const repo = AppDataSource.getRepository(Car);
+    const repo = getRepositories().carRepository;
     const car = await repo.findOne({
       where: {
         licensePlate: license,

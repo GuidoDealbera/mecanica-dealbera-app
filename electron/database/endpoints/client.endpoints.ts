@@ -1,10 +1,9 @@
 import { ipcMain } from "electron";
 import { CreateClientDto } from "../Types/client.dto";
-import { AppDataSource } from "../data-source";
-import { Client } from "../entities/clients.entity";
+import { getRepositories } from "../dataSource";
 
 ipcMain.handle('client:create', async (_, createClientDto: CreateClientDto) => {
-    const repo = AppDataSource.getRepository(Client)
+    const repo = getRepositories().clientRepository
     const owner = await repo.findOne({
         where: {
             fullname: createClientDto.fullname
@@ -25,14 +24,14 @@ ipcMain.handle('client:create', async (_, createClientDto: CreateClientDto) => {
 })
 
 ipcMain.handle('client:get-all', async () => {
-    const repo = AppDataSource.getRepository(Client)
+    const repo = getRepositories().clientRepository
     return await repo.find({
         relations: ['cars']
     })
 })
 
 ipcMain.handle('client:find-by-name', async (_, fullname: CreateClientDto['fullname']) => {
-    const repo = AppDataSource.getRepository(Client)
+    const repo = getRepositories().clientRepository
     const owner = await repo.findOne({
         where: {
             fullname
@@ -53,7 +52,7 @@ ipcMain.handle('client:find-by-name', async (_, fullname: CreateClientDto['fulln
 })
 
 ipcMain.handle('client:update', async (_, updateClientDto: Partial<CreateClientDto>) => {
-    const repo = AppDataSource.getRepository(Client)
+    const repo = getRepositories().clientRepository
     const {
         address,
         city,

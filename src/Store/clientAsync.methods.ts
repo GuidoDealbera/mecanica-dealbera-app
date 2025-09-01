@@ -1,15 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { clientService } from "./Services/client.service";
-import { handleApiError } from "../utils";
-
 export const fetchClients = createAsyncThunk(
   "clients/fetchClients",
   async (_, { rejectWithValue }) => {
     try {
       return await clientService.getAll();
     } catch (error) {
-      rejectWithValue(handleApiError(error));
-      throw error;
+      return rejectWithValue(error);
     }
   }
 );
@@ -20,8 +17,7 @@ export const fetchClientByName = createAsyncThunk(
     try {
       return await clientService.getOne(fullname);
     } catch (error) {
-      rejectWithValue(handleApiError(error));
-      throw error
+      return rejectWithValue(error);
     }
   }
 );
@@ -32,8 +28,7 @@ export const updateClient = createAsyncThunk(
     try {
       return await clientService.update(body);
     } catch (error) {
-      rejectWithValue(handleApiError(error));
-      throw error
+      return rejectWithValue(error);
     }
   }
 );

@@ -1,29 +1,40 @@
-import { ipcRenderer, contextBridge } from 'electron'
-import { CreateCarDto } from './database/Types/car.dto'
+import { ipcRenderer, contextBridge } from "electron";
+import { CreateCarDto } from "./database/Types/car.dto";
 
 // --------- Expose some API to the Renderer process ---------
-contextBridge.exposeInMainWorld('ipcRenderer', {
+contextBridge.exposeInMainWorld("ipcRenderer", {
   on(...args: Parameters<typeof ipcRenderer.on>) {
-    const [channel, listener] = args
-    return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
+    const [channel, listener] = args;
+    return ipcRenderer.on(channel, (event, ...args) =>
+      listener(event, ...args)
+    );
   },
   off(...args: Parameters<typeof ipcRenderer.off>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.off(channel, ...omit)
+    const [channel, ...omit] = args;
+    return ipcRenderer.off(channel, ...omit);
   },
   send(...args: Parameters<typeof ipcRenderer.send>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.send(channel, ...omit)
+    const [channel, ...omit] = args;
+    return ipcRenderer.send(channel, ...omit);
   },
   invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.invoke(channel, ...omit)
+    const [channel, ...omit] = args;
+    return ipcRenderer.invoke(channel, ...omit);
   },
 
   // You can expose other APTs you need here.
   // ...
-})
+});
 
-contextBridge.exposeInMainWorld('api', {
-  createCar: (car: CreateCarDto) => ipcRenderer.invoke("car:create", car)
-})
+contextBridge.exposeInMainWorld("api", {
+  cars: {
+    createCar: (car: CreateCarDto) => ipcRenderer.invoke("car:create", car),
+    getAllCars: () => ipcRenderer.invoke("car:get-all"),
+    getCarByLicense: (license: string) =>
+      ipcRenderer.invoke("car:get-by-license", license),
+  },
+
+  clients: {
+    getAllClients: () => ipcRenderer.invoke("client:get-all"),
+  },
+});

@@ -37,11 +37,11 @@ const clientSlice = createSlice({
       })
       .addCase(fetchClients.rejected, (state, action) => {
         state.loadingStates.fetching_all = false;
-        state.error = action.payload as any;
+        state.error = action.payload as Error;
       })
       .addCase(fetchClients.fulfilled, (state, action) => {
         state.loadingStates.fetching_all = false;
-        state.allClients = action.payload?.result;
+        state.allClients = action.payload;
       })
       .addCase(fetchClientByName.pending, (state) => {
         state.loadingStates.fetching = true;
@@ -49,7 +49,7 @@ const clientSlice = createSlice({
       })
       .addCase(fetchClientByName.rejected, (state, action) => {
         state.loadingStates.fetching = false;
-        state.error = action.payload as any;
+        state.error = action.payload as Error;
       })
       .addCase(fetchClientByName.fulfilled, (state, action) => {
         state.loadingStates.fetching = false;

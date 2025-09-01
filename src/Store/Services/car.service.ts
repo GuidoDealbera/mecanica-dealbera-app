@@ -5,18 +5,19 @@ import {
   CreateCarJob,
   UpdateJobBody,
 } from "../../Types/apiTypes";
+import { Car } from "../../Types/types";
 
 const SERVER_URL = `${API_BASE_URL}/cars`;
 
 export const carService = {
-  create: async (carBody: CreateCarBody): Promise<any> => {
-    return await window.api.createCar(carBody)
+  create: async (carBody: CreateCarBody): Promise<APIResponse> => {
+    return await window.api.cars.createCar(carBody)
   },
-  getAll: async (): Promise<APIResponse> => {
-    return (await apiAxios.get<APIResponse>(`${SERVER_URL}/all`)).data;
+  getAll: async (): Promise<Car[]> => {
+    return await window.api.cars.getAllCars()
   },
   getByLicence: async (licence: string): Promise<APIResponse> => {
-    return (await apiAxios.get<APIResponse>(`${SERVER_URL}/${licence}`)).data;
+    return await window.api.cars.getCarByLicense(licence)
   },
   createJob: async (
     carId: string,

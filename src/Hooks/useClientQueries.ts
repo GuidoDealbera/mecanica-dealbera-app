@@ -6,9 +6,10 @@ import {
   fetchClients,
   updateClient,
 } from "../Store/clientAsync.methods";
-import { ToastError, ToastSuccess } from "../ToastAlerts/alerts";
+import { useToasts } from "./useToast";
 
 export const useClientQueries = () => {
+  const {showToast} = useToasts()
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -45,9 +46,9 @@ export const useClientQueries = () => {
     setRefreshing(true);
     try {
       await dispatch(fetchClients()).unwrap();
-      ToastSuccess("Datos actualizados correctamente");
+      showToast("Datos actualizados correctamente", 'success');
     } catch (error) {
-      ToastError("Error al actualizar los datos");
+      showToast("Error al actualizar los datos", 'error');
       return error;
     } finally {
       setRefreshing(false);

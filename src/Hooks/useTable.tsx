@@ -48,7 +48,7 @@ export const useTable = () => {
       field: "brand",
       renderHeader: () => <Typography>MARCA</Typography>,
       align: "center",
-      renderCell: (params) => <TableCell value={params.value} />,
+      renderCell: (params) => <TableCell value={params.value.toUpperCase()} />,
     },
     {
       field: "model",

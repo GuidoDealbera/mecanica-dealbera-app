@@ -1,63 +1,36 @@
-// vite.config.js
 import { defineConfig } from 'vite'
+import path from 'node:path'
+import electron from 'vite-plugin-electron/simple'
 import react from '@vitejs/plugin-react'
-import electron from 'vite-plugin-electron'
-import renderer from 'vite-plugin-electron-renderer'
-import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [
     react(),
-    electron([
-      {
-        // Proceso principal
+    electron({
+      main: {
         entry: 'electron/main.ts',
-        onstart: ({startup}) => {
-          startup()
-          console.log('Electron started')
-        },
         vite: {
           build: {
-            sourcemap: true,
-            minify: process.env.NODE_ENV === 'production',
-            outDir: 'dist-electron',
             rollupOptions: {
-              external: Object.keys(require('./package.json').dependencies || {}),
-            },
-          },
-        },
+              external: (id) => {
+                // Excluir TypeORM y todos sus drivers
+                return id === 'typeorm' || 
+                       id.startsWith('typeorm/') ||
+                       id === '@google-cloud/spanner' ||
+                       id.startsWith('@google-cloud/') ||
+                       ['sqlite3', 'better-sqlite3', 'mysql2', 'pg', 'mongodb'].includes(id)
+              }
+            }
+          }
+        }
       },
-      {
-        // Preload script
-        entry: 'electron/preload.ts',
-        onstart: ({reload}) => {
-          reload()
-          console.log('Preload loaded')
-        },
-        vite: {
-          build: {
-            sourcemap: 'inline',
-            minify: process.env.NODE_ENV === 'production',
-            outDir: 'dist-electron',
-            rollupOptions: {
-              external: Object.keys(require('./package.json').dependencies || {}),
-            },
-          },
-        },
+      preload: {
+        input: path.join(__dirname, 'electron/preload.ts'),
       },
-    ]),
-    renderer(),
+      renderer: process.env.NODE_ENV === 'test' ? undefined : {},
+    }),
   ],
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src'),
-    },
-  },
   server: {
-    port: 3000,
-  },
-  build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-  },
+    port: 3000
+  }
 })

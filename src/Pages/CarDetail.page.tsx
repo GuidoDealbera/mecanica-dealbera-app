@@ -134,7 +134,7 @@ const CarDetail = () => {
         onChange={handleChangeTab}
       >
         <Tab label="Datos del vehículo" />
-        <Tab label="Datos del vehículo" />
+        <Tab label="Trabajos realizados" />
       </Tabs>
       {activeTab === 0 && (
         <AddCarForm

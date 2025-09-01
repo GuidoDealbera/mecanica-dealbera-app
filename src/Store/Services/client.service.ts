@@ -1,11 +1,12 @@
 import { API_BASE_URL, apiAxios } from "../../axios.config";
 import { APIResponse } from "../../Types/apiTypes";
+import { Client } from "../../Types/types";
 
 const SERVER_URL = `${API_BASE_URL}/clients`;
 
 export const clientService = {
-  getAll: async (): Promise<APIResponse> => {
-    return (await apiAxios.get<APIResponse>(`${SERVER_URL}/all`)).data;
+  getAll: async (): Promise<Client[]> => {
+    return await window.api.clients.getAllClients()
   },
   getOne: async (fullname:string): Promise<APIResponse> => {
     return (await apiAxios.get<APIResponse>(`${SERVER_URL}/${fullname}`)).data;

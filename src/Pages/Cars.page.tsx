@@ -20,19 +20,17 @@ import TablePlate from "../Components/Licences/TablesPlates";
 
 const Cars = () => {
   const navigate = useNavigate();
-  const { carsColumns, openDialog, selectedLicence, setOpenDialog, handleDelete } =
-    useTable();
   const {
-    getAllCars,
-    refresh,
-    refreshing,
-    loading,
-    allCars,
-    loadingStates,
-  } = useCarQueries();
+    carsColumns,
+    openDialog,
+    selectedLicence,
+    setOpenDialog,
+    handleDelete,
+  } = useTable();
+  const { getAllCars, refresh, refreshing, loading, allCars, loadingStates } =
+    useCarQueries();
   const [licenceFilter, setLicenceFilter] = useState<string>("");
 
-  
   useEffect(() => {
     getAllCars();
   }, []);
@@ -86,7 +84,7 @@ const Cars = () => {
       <CustomDataGrid
         rows={filteredCars}
         columns={carsColumns}
-        localeText={{ noRowsLabel: "No hay vehículos registrados" }}
+        localeText={{ noRowsLabel: licenceFilter ? "No hay vehículos que coincidan con la búsqueda" : "No hay vehículos registrados" }}
         loading={isLoading}
       />
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
@@ -109,12 +107,16 @@ const Cars = () => {
             ¿Estás seguro de querer eliminarlo?
           </DialogContentText>
           <DialogActions>
-            <Button sx={{
-              "&:hover": {
-                bgcolor: "primary.dark",
-                color: "white"
-              }
-            }} variant="outlined" onClick={() => setOpenDialog(false)}>
+            <Button
+              sx={{
+                "&:hover": {
+                  bgcolor: "primary.dark",
+                  color: "white",
+                },
+              }}
+              variant="outlined"
+              onClick={() => setOpenDialog(false)}
+            >
               Cancelar
             </Button>
             <Button

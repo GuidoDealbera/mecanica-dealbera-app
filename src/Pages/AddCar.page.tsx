@@ -2,18 +2,19 @@ import { Box, Paper, Typography } from "@mui/material";
 import AddCarForm from "../Components/Forms/AddCarForm";
 import { useCarQueries } from "../Hooks/useCarQueries";
 import { CreateCarBody } from "../Types/apiTypes";
-import { ToastError } from "../ToastAlerts/alerts";
+import { useToasts } from "../Hooks/useToast";
 
 const AddCar = () => {
   const { loading, create } = useCarQueries();
+  const {showToast} = useToasts()
   const handleSubmit = async (data: CreateCarBody) => {
     try {
       await create(data);
     } catch (error) {
       if (error instanceof Error) {
-        ToastError(error.message);
+        showToast(error.message, 'error');
       } else {
-        ToastError("Error al registrar automóvil");
+        showToast("Error al registrar automóvil", 'error');
       }
     }
   };

@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Client } from './clients.entity';
+import { Client } from './client.entity';
 import { Jobs } from '../Types/car.dto';
 import { CarsBrands } from '../Types/enums';
 import type {CarBrand} from '../Types/enums'
@@ -66,13 +66,13 @@ export class Car {
   @Column('integer', { nullable: false })
   kilometers!: number;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'date' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: 'date' })
   updatedAt!: Date;
 
-  @ManyToOne(() => Client, (client) => client.cars, { nullable: true })
+  @ManyToOne(() => Client, (client) => client.cars, { nullable: true, eager: true })
   owner!: Client;
 
   constructor(partial: Partial<Car>) {

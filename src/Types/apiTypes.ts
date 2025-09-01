@@ -25,7 +25,7 @@ export interface CreateCarBody {
 export interface APIResponse {
   status: 'success' | 'failed';
   message: string;
-  result: any;
+  result?: any;
 }
 
 export interface UpdateCar {

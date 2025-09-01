@@ -1,8 +1,8 @@
 import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Length, Matches, Min, ValidateNested } from "class-validator";
 import {Transform, Type} from 'class-transformer'
+import type {CarBrand} from './enums'
+import { CarsBrands } from './enums';
 import { CreateClientDto } from "./client.dto";
-import type {CarBrand} from '../Types/enums'
-import { CarsBrands } from '../Types/enums';
 import { JobStatus } from "../../../src/Types/apiTypes";
 
 export class CreateCarDto {

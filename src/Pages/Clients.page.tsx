@@ -51,7 +51,7 @@ const Clients = () => {
         rows={filteredClients}
         columns={clientColumns}
         loading={loading || refreshing}
-        localeText={{ noRowsLabel: "No hay clientes registrados" }}
+        localeText={{ noRowsLabel: nameFilter ? "No hay clientes que coincidan con la búsqueda" : "No hay clientes registrados" }}
         initialState={{
           columns: {
             columnVisibilityModel: {

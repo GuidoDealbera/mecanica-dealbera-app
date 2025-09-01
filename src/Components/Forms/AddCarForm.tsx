@@ -61,7 +61,6 @@ const AddCarForm: React.FC<Props> = ({
     formState: { isDirty, errors, dirtyFields, isValid },
     setValue,
     reset,
-    watch
   } = form;
   const { allClients } = useSelector((state: RootState) => state.clients);
 
@@ -76,6 +75,7 @@ const AddCarForm: React.FC<Props> = ({
   );
 
   const clientsNames = useMemo(() => {
+    if (!allClients || allClients.length === 0) return null;
     return allClients.map((client) => client.fullname);
   }, [allClients]);
 
@@ -92,6 +92,12 @@ const AddCarForm: React.FC<Props> = ({
       setValue("owner.email" as const, selectedOwner.email);
       setValue("owner.fullname" as const, selectedOwner.fullname);
       setValue("owner.phone" as const, selectedOwner.phone);
+    } else {
+      setValue("owner.address" as const, "");
+      setValue("owner.city" as const, "");
+      setValue("owner.email" as const, "");
+      setValue("owner.fullname" as const, "");
+      setValue("owner.phone" as const, "");
     }
   }, [selectedOwner, setValue]);
 
@@ -106,11 +112,6 @@ const AddCarForm: React.FC<Props> = ({
       reset(initialValues);
     }
   }, [initialValues]);
-
-  const brand = watch('brand')
-  useEffect(() => {
-    console.log(brand)
-  }, [brand])
 
   return (
     <FormWrapper form={form}>
@@ -152,7 +153,7 @@ const AddCarForm: React.FC<Props> = ({
                 }}
                 disabled={isLoading || readonly}
                 render={({ field, fieldState: { error } }) =>
-                  clientsNames.length > 0 ? (
+                  clientsNames && clientsNames.length > 0 ? (
                     <Autocomplete
                       {...field}
                       options={clientsNames}

@@ -11,15 +11,16 @@ import {
 } from "../Store/carAsync.methods";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastError, ToastSuccess } from "../ToastAlerts/alerts";
 import {
   cleanCarsState,
   cleanCarState,
   cleanError,
 } from "../Store/Slices/carSlice";
 import { setByPassNavigation } from "../utils";
+import { useToasts } from "./useToast";
 
 export const useCarQueries = () => {
+  const {showToast} = useToasts()
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -41,12 +42,12 @@ export const useCarQueries = () => {
           },
         };
         const response = await dispatch(createCar(data)).unwrap();
-        ToastSuccess('Automóvil registrado exitosamente');
+        showToast(response.message, 'success');
         setByPassNavigation(true);
         navigate("/cars");
         return response;
       } catch (error: any) {
-        ToastError(error.message);
+        showToast(error.message, 'error');
         return error;
       } finally {
         setLoading(false);
@@ -70,9 +71,9 @@ export const useCarQueries = () => {
     setRefreshing(true);
     try {
       await dispatch(fetchCars()).unwrap();
-      ToastSuccess("Datos actualizados correctamente");
+      showToast("Datos actualizados correctamente", 'success');
     } catch (error) {
-      ToastError("Error al actualizar los datos");
+      showToast("Error al actualizar los datos", 'success');
       return error;
     } finally {
       setRefreshing(false);
@@ -84,9 +85,9 @@ export const useCarQueries = () => {
       setRefreshing(true);
       try {
         await dispatch(fetchCarByLicence(licence)).unwrap();
-        ToastSuccess("Datos actualizados exitosamente");
+        showToast("Datos actualizados exitosamente", 'success');
       } catch (error) {
-        ToastError("Error al actualizar los datos");
+        showToast("Error al actualizar los datos", 'error');
         return error;
       } finally {
         setRefreshing(false);
@@ -101,7 +102,7 @@ export const useCarQueries = () => {
       try {
         await dispatch(fetchCarByLicence(licence));
       } catch (error: any) {
-        ToastError(error.message);
+        showToast(error.message, 'error');
         return error;
       } finally {
         setLoading(false);
@@ -115,9 +116,9 @@ export const useCarQueries = () => {
       setLoading(true);
       try {
         const response = await dispatch(deleteCar(licence)).unwrap();
-        ToastSuccess(response.message as string);
+        showToast(response.message as string, 'success');
       } catch (error: any) {
-        ToastError(error.message);
+        showToast(error.message, 'error');
         return error;
       } finally {
         setLoading(false);
@@ -131,12 +132,12 @@ export const useCarQueries = () => {
       setLoading(true);
       try {
         const response = await dispatch(createJob({ id, data })).unwrap();
-        ToastSuccess(response.message as string);
+        showToast(response.message as string, 'success');
         setByPassNavigation(true);
         navigate("/cars");
         return response;
       } catch (error: any) {
-        ToastError(error.message);
+        showToast(error.message, 'error');
         return error;
       } finally {
         setLoading(false);
@@ -149,10 +150,10 @@ export const useCarQueries = () => {
     setLoading(true);
     try {
       const response = await dispatch(updateJobInCar({licence, jobId, body})).unwrap();
-      ToastSuccess(response.message as string);
+      showToast(response.message as string, 'success');
       return response;
     } catch (error: any) {
-      ToastError(error.message);
+      showToast(error.message, 'error');
       return error;
     } finally {
       setLoading(false);
